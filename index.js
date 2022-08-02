@@ -24,12 +24,33 @@ async function run() {
     console.log("connected");
     const database = client.db("korean_shop_bangladesh");
     const productCollection = database.collection("products");
+    const magnificOffers = database.collection("magnificOffers");
+    const featuredProducts = database.collection("featuredProducts");
+    const bestSelling = database.collection("bestSelling");
 
     //get
 
     //GET ALL PRODUCTS
     app.get("/products", async (req, res) => {
       const cursor = productCollection.find({});
+      const products = await cursor.toArray();
+      res.json(products);
+    });
+
+    app.get("/magnificOffers", async (req, res) => {
+      const cursor = magnificOffers.find({});
+      const products = await cursor.toArray();
+      res.json(products);
+    });
+
+    app.get("/featuredProducts", async (req, res) => {
+      const cursor = featuredProducts.find({});
+      const products = await cursor.toArray();
+      res.json(products);
+    });
+
+    app.get("/bestSelling", async (req, res) => {
+      const cursor = bestSelling.find({});
       const products = await cursor.toArray();
       res.json(products);
     });
