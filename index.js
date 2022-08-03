@@ -76,9 +76,8 @@ async function run() {
       const query = { specialCategory: category };
       const cursor = productCollection.find(query);
       const products = await cursor.toArray();
-      console.log(query, products);
+      res.json(products);
     });
-    
   } finally {
     // await client.close();
   }
