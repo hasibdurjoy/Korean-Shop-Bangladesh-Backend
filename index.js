@@ -24,6 +24,7 @@ async function run() {
     console.log("connected");
     const database = client.db("korean_shop_bangladesh");
     const productCollection = database.collection("products");
+    const bannerCollection = database.collection("banner_images");
     const magnificOffers = database.collection("magnificOffers");
     const featuredProducts = database.collection("featuredProducts");
     const bestSelling = database.collection("bestSelling");
@@ -33,6 +34,12 @@ async function run() {
     //GET ALL PRODUCTS
     app.get("/products", async (req, res) => {
       const cursor = productCollection.find({});
+      const products = await cursor.toArray();
+      res.json(products);
+    });
+
+    app.get("/banners", async (req, res) => {
+      const cursor = bannerCollection.find({});
       const products = await cursor.toArray();
       res.json(products);
     });
@@ -62,6 +69,16 @@ async function run() {
       const product = await productCollection.findOne(query);
       res.json(product);
     });
+
+    //GET  PRODUCTS BY CATEGORY
+    app.get("/products/:category", async (req, res) => {
+      const category = req.params.category;
+      const query = { specialCategory: category };
+      const cursor = productCollection.find(query);
+      const products = await cursor.toArray();
+      console.log(query, products);
+    });
+    
   } finally {
     // await client.close();
   }
