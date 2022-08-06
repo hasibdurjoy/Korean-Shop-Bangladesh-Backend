@@ -25,9 +25,7 @@ async function run() {
     const database = client.db("korean_shop_bangladesh");
     const productCollection = database.collection("products");
     const bannerCollection = database.collection("banner_images");
-    const magnificOffers = database.collection("magnificOffers");
-    const featuredProducts = database.collection("featuredProducts");
-    const bestSelling = database.collection("bestSelling");
+    const orderCollection = database.collection("orders");
 
     //get
 
@@ -38,26 +36,23 @@ async function run() {
       res.json(products);
     });
 
+    //GET ALL ORDERS
+    app.get("/orders", async (req, res) => {
+      const cursor = orderCollection.find({});
+      const orders = await cursor.toArray();
+      res.json(orders);
+    });
+
+    //GET ORDERS BY UID
+    app.get("/orders/:uid", async (req, res) => {
+      const uid = [req.params.uid];
+      const query = { userId: { $in: uid } };
+      const orders = await orderCollection.find(query).toArray();
+      res.send(orders);
+    });
+
     app.get("/banners", async (req, res) => {
       const cursor = bannerCollection.find({});
-      const products = await cursor.toArray();
-      res.json(products);
-    });
-
-    app.get("/magnificOffers", async (req, res) => {
-      const cursor = magnificOffers.find({});
-      const products = await cursor.toArray();
-      res.json(products);
-    });
-
-    app.get("/featuredProducts", async (req, res) => {
-      const cursor = featuredProducts.find({});
-      const products = await cursor.toArray();
-      res.json(products);
-    });
-
-    app.get("/bestSelling", async (req, res) => {
-      const cursor = bestSelling.find({});
       const products = await cursor.toArray();
       res.json(products);
     });
@@ -77,6 +72,13 @@ async function run() {
       const cursor = productCollection.find(query);
       const products = await cursor.toArray();
       res.json(products);
+    });
+
+    //post
+    app.post("/orders", async (req, res) => {
+      const order = req.body;
+      const booking = await orderCollection.insertOne(order);
+      res.json(booking);
     });
   } finally {
     // await client.close();
