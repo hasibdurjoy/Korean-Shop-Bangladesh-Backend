@@ -27,32 +27,11 @@ async function run() {
     const bannerCollection = database.collection("banner_images");
     const orderCollection = database.collection("orders");
 
-    //get
+    //Manage Products
 
     //GET ALL PRODUCTS
     app.get("/products", async (req, res) => {
       const cursor = productCollection.find({});
-      const products = await cursor.toArray();
-      res.json(products);
-    });
-
-    //GET ALL ORDERS
-    app.get("/orders", async (req, res) => {
-      const cursor = orderCollection.find({});
-      const orders = await cursor.toArray();
-      res.json(orders);
-    });
-
-    //GET ORDERS BY UID
-    app.get("/orders/:uid", async (req, res) => {
-      const uid = [req.params.uid];
-      const query = { userId: { $in: uid } };
-      const orders = await orderCollection.find(query).toArray();
-      res.send(orders);
-    });
-
-    app.get("/banners", async (req, res) => {
-      const cursor = bannerCollection.find({});
       const products = await cursor.toArray();
       res.json(products);
     });
@@ -74,17 +53,22 @@ async function run() {
       res.json(products);
     });
 
-    //post
-    app.post("/orders", async (req, res) => {
-      const order = req.body;
-      const booking = await orderCollection.insertOne(order);
-      res.json(booking);
-    });
-
     //ADD NEW PRODUCT
     app.post("/products", async (req, res) => {
       const product = req.body;
       const result = await productCollection.insertOne(product);
+      res.json(result);
+    });
+
+    //UPDATE PRODUCT
+    app.put("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const product = req.body;
+      const filter = { _id: ObjectId(id) };
+      const updateDoc = {
+        $set: { ...product },
+      };
+      const result = await productCollection.updateOne(filter, updateDoc);
       res.json(result);
     });
 
@@ -94,6 +78,49 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const result = await productCollection.deleteOne(query);
       res.json(result);
+    });
+
+    //Manage Orders
+
+    //GET ALL ORDERS
+    app.get("/orders", async (req, res) => {
+      const cursor = orderCollection.find({});
+      const orders = await cursor.toArray();
+      res.json(orders);
+    });
+
+    //GET ORDERS BY UID
+    app.get("/orders/:uid", async (req, res) => {
+      const uid = [req.params.uid];
+      const query = { userId: { $in: uid } };
+      const orders = await orderCollection.find(query).toArray();
+      res.send(orders);
+    });
+
+    //post new order
+    app.post("/orders", async (req, res) => {
+      const order = req.body;
+      const booking = await orderCollection.insertOne(order);
+      res.json(booking);
+    });
+
+    //UPDATE BOOKING
+    app.put("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const updateDoc = {
+        $set: { status: "approved" },
+      };
+      const result = await orderCollection.updateOne(filter, updateDoc);
+      res.json(result);
+    });
+
+    //Manage Banners
+
+    app.get("/banners", async (req, res) => {
+      const cursor = bannerCollection.find({});
+      const products = await cursor.toArray();
+      res.json(products);
     });
   } finally {
     // await client.close();
