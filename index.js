@@ -80,6 +80,21 @@ async function run() {
       const booking = await orderCollection.insertOne(order);
       res.json(booking);
     });
+
+    //ADD NEW PRODUCT
+    app.post("/products", async (req, res) => {
+      const product = req.body;
+      const result = await productCollection.insertOne(product);
+      res.json(result);
+    });
+
+    //DELETE PRODUCT
+    app.delete("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await productCollection.deleteOne(query);
+      res.json(result);
+    });
   } finally {
     // await client.close();
   }
