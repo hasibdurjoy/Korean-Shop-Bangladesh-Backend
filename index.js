@@ -107,9 +107,10 @@ async function run() {
     //UPDATE BOOKING
     app.put("/orders/:id", async (req, res) => {
       const id = req.params.id;
+      const updateData = req.body;
       const filter = { _id: ObjectId(id) };
       const updateDoc = {
-        $set: { status: "approved" },
+        $set: { ...updateData },
       };
       const result = await orderCollection.updateOne(filter, updateDoc);
       res.json(result);
