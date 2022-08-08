@@ -139,6 +139,16 @@ async function run() {
       const result = await userCollection.insertOne(product);
       res.json(result);
     });
+
+    //UPDATE USER
+    app.put("/users", async (req, res) => {
+      const user = req.body;
+      const filter = { email: user.email };
+      const options = { upsert: true };
+      const updateDoc = { $set: user };
+      const result = await userCollection.updateOne(filter, updateDoc, options);
+      res.json(result);
+    });
   } finally {
     // await client.close();
   }
