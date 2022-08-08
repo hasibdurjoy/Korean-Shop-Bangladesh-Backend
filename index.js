@@ -26,6 +26,7 @@ async function run() {
     const productCollection = database.collection("products");
     const bannerCollection = database.collection("banner_images");
     const orderCollection = database.collection("orders");
+    const userCollection = database.collection("users");
 
     //Manage Products
 
@@ -122,6 +123,21 @@ async function run() {
       const cursor = bannerCollection.find({});
       const products = await cursor.toArray();
       res.json(products);
+    });
+
+    //Manage users
+    //GET ALL USERS
+    app.get("/users", async (req, res) => {
+      const cursor = userCollection.find({});
+      const orders = await cursor.toArray();
+      res.json(orders);
+    });
+
+    //ADD NEW USER
+    app.post("/users", async (req, res) => {
+      const product = req.body;
+      const result = await userCollection.insertOne(product);
+      res.json(result);
     });
   } finally {
     // await client.close();
